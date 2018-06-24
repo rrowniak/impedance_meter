@@ -8,7 +8,7 @@ extern "C" {
 // R1 on the schematics
 #define SHUNT_R1 46.2
 // R2 on the schematics
-#define SHUNT_R2 4.59
+#define SHUNT_R2 4590
 // R6 on the schematics
 #define DIV_R1 986.0
 // R8 on the schematics
