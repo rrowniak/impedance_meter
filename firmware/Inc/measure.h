@@ -5,10 +5,18 @@ extern "C" {
 #endif
 
 #define V_REF 3.3
-#define SHUNT_R1 50.0
-#define SHUNT_R2 5700.0
-#define DIV_R1 1000.0
-#define DIV_R2 2000.0
+// R1 on the schematics
+#define SHUNT_R1 46.2
+// R2 on the schematics
+#define SHUNT_R2 4.59
+// R6 on the schematics
+#define DIV_R1 986.0
+// R8 on the schematics
+#define DIV_R2 2170.0
+// R9 on the schematics
+#define DIV_R3 994.0
+// R10 on the schematics
+#define DIV_R4 2150.0
 
 #define REPEAT_MEASURE 5
 

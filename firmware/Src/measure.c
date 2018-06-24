@@ -90,7 +90,7 @@ static float measure_v(ADC_HandleTypeDef* hadc)
     return sum / REPEAT_MEASURE;
 }
 
-static float measure_v_auto(ADC_HandleTypeDef* hadc)
+static float measure_v_auto(ADC_HandleTypeDef* hadc, float div1, float div2)
 {
     // enable voltage divider
     HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_SET);
@@ -99,7 +99,7 @@ static float measure_v_auto(ADC_HandleTypeDef* hadc)
     float v1 = measure_v(hadc);
     HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_RESET);
     // calculate real voltage
-    v1 = v1 * (DIV_R1 + DIV_R2) / DIV_R2;
+    v1 = v1 * (div1 + div2) / div1;
 
     if (v1 < V_REF) {
         // do not use divider as we can get more accurate results
@@ -122,10 +122,10 @@ float measure_input_impedance()
     prepare_for_measurement();
 
     // measure input voltage
-    float vpp1 = measure_v_auto(&hadc1);
+    float vpp1 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
 
     // measure voltage on output
-    float vpp2 = measure_v_auto(&hadc2);
+    float vpp2 = measure_v_auto(&hadc2, DIV_R3, DIV_R4);
 
     CHECK_NON_ZERO(vpp2);
 
@@ -137,8 +137,8 @@ float measure_input_impedance()
 
         prepare_for_measurement();
         // measure input voltage
-        float vpp1 = measure_v_auto(&hadc1);
-        float vpp2 = measure_v_auto(&hadc1);
+        float vpp1 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
+        float vpp2 = measure_v_auto(&hadc2, DIV_R3, DIV_R4);
 
         CHECK_NON_ZERO(vpp2);
 
@@ -161,7 +161,7 @@ float measeure_output_impedance()
     prepare_for_measurement();
 
     // measure input voltage
-    float vpp1 = measure_v_auto(&hadc1);
+    float vpp1 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
 
     // close the circuit as we're going to measure voltage under load
     select_shunt_high_res();
@@ -170,7 +170,7 @@ float measeure_output_impedance()
     prepare_for_measurement();
 
     // measure voltage under load
-    float vpp2 = measure_v_auto(&hadc1);
+    float vpp2 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
 
     CHECK_NON_ZERO(vpp2);
 
@@ -182,7 +182,7 @@ float measeure_output_impedance()
 
         prepare_for_measurement();
         // measure input voltage
-        float vpp2 = measure_v_auto(&hadc1);
+        float vpp2 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
 
         CHECK_NON_ZERO(vpp2);
 
@@ -202,5 +202,5 @@ float measure_input_v()
 
     prepare_for_measurement();
 
-    return measure_v_auto(&hadc1);
+    return measure_v_auto(&hadc1, DIV_R1, DIV_R2);
 }
