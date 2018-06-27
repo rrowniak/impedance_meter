@@ -70,6 +70,16 @@ static inline void prepare_for_measurement() {
     HAL_Delay(ADC_DELAY_MS);
 }
 
+static inline void enable_volt_divs() {
+    HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DIV_2_GPIO_Port, DIV_2_Pin, GPIO_PIN_SET);
+}
+
+static inline void disable_volt_divs() {
+    HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DIV_2_GPIO_Port, DIV_2_Pin, GPIO_PIN_RESET);
+}
+
 static float measure_v(ADC_HandleTypeDef* hadc)
 {
     float sum = 0;
@@ -92,19 +102,23 @@ static float measure_v(ADC_HandleTypeDef* hadc)
 
 static float measure_v_auto(ADC_HandleTypeDef* hadc, float div1, float div2)
 {
-    // enable voltage divider
-    HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_SET);
+    enable_volt_divs();
+
     HAL_Delay(ADC_DELAY_MS);
-    // measure voltage
+
     float v1 = measure_v(hadc);
-    HAL_GPIO_WritePin(DIV_1_GPIO_Port, DIV_1_Pin, GPIO_PIN_RESET);
     // calculate real voltage
-    v1 = v1 * (div1 + div2) / div1;
+    v1 = v1 * (div1 + div2) / div2;
 
     if (v1 < V_REF) {
-        // do not use divider as we can get more accurate results
+        // try to acquire better results
+        disable_volt_divs();
+
         HAL_Delay(ADC_DELAY_MS);
+
         v1 = measure_v(hadc);
+
+        enable_volt_divs();
     }
 
     return v1;
