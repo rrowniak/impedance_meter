@@ -12,11 +12,11 @@ extern "C" {
 // R6 on the schematics
 #define DIV_R1 986.0
 // R8 on the schematics
-#define DIV_R2 2170.0
+#define DIV_R2 550.0
 // R9 on the schematics
 #define DIV_R3 994.0
 // R10 on the schematics
-#define DIV_R4 2150.0
+#define DIV_R4 549.0
 
 #define REPEAT_MEASURE 5
 

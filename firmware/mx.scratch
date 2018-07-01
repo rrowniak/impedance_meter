@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
-<ProjectName>/home/rr/dev/impedance_meter/cube/impedance_meter/\impedance_meter</ProjectName>
+<ProjectName>/home/rr/dev/free/impedance_meter/firmware/\impedance_meter</ProjectName>
 <ProjectNature>C</ProjectNature> 
 <CMSIS>Drivers/CMSIS</CMSIS>
 <HAL_Driver>/home/rr/STM32Cube/Repository//STM32Cube_FW_F1_V1.6.1/Drivers/CMSIS</HAL_Driver>

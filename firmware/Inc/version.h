@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#define VERSION "1.4.5"
+#define VERSION "1.4.8"
 
 #ifdef __cplusplus
 }

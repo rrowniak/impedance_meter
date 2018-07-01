@@ -11,10 +11,12 @@
 #define ADC_DISCHARGE_MS 5
 #define MEASURE_SLEEP_MS 3
 
+#define IMP_ACCURACY_THRESHOLD 700
+
 #define CHECK_NON_ZERO(v) \
 if (v < VOLT_EPSILON) { \
     state = STATE_INFINITY; \
-    return INFINITY; \
+    goto infinity; \
 } \
 
 static States state = STATE_OK;
@@ -85,7 +87,7 @@ static float measure_v(ADC_HandleTypeDef* hadc)
     float sum = 0;
     // repeat measurements to get average voltage
     for (uint16_t i = 0; i < REPEAT_MEASURE; ++i) {
-        HAL_StatusTypeDef ret = HAL_ADC_PollForConversion(&hadc1, 500);
+        HAL_StatusTypeDef ret = HAL_ADC_PollForConversion(hadc, 500);
 
         if (ret == HAL_ERROR) {
             error("POOL_CONV");
@@ -93,7 +95,7 @@ static float measure_v(ADC_HandleTypeDef* hadc)
             error("POOL_CONV_TIM");
         }
 
-        uint16_t rawValue = HAL_ADC_GetValue(&hadc1);
+        uint16_t rawValue = HAL_ADC_GetValue(hadc);
         sum = sum + ((float)rawValue) / 4095 * V_REF;
         HAL_Delay(MEASURE_SLEEP_MS);
     }
@@ -141,11 +143,11 @@ float measure_input_impedance()
     // measure voltage on output
     float vpp2 = measure_v_auto(&hadc2, DIV_R3, DIV_R4);
 
-    CHECK_NON_ZERO(vpp2);
+    CHECK_NON_ZERO(vpp1 - vpp2);
 
-    float z1 = SHUNT_R2 * (vpp1 - vpp2) / vpp2;
+    float z1 = SHUNT_R2 * vpp2 / (vpp1 - vpp2);
 
-    if (z1 < 700) {
+    if (z1 < IMP_ACCURACY_THRESHOLD) {
         // we may get better acurracy using lower shunt resistor
         select_shunt_low_res();
 
@@ -154,15 +156,19 @@ float measure_input_impedance()
         float vpp1 = measure_v_auto(&hadc1, DIV_R1, DIV_R2);
         float vpp2 = measure_v_auto(&hadc2, DIV_R3, DIV_R4);
 
-        CHECK_NON_ZERO(vpp2);
+        CHECK_NON_ZERO(vpp1 - vpp2);
 
-        z1 = SHUNT_R1 * (vpp1 - vpp2) / vpp2;
+        z1 = SHUNT_R1 * vpp2 / (vpp1 - vpp2);
     }
 
     // go to default state
     select_shunt_high_res();
 
     return z1;
+infinity:
+    // go to default state
+    select_shunt_high_res();
+    return INFINITY;
 }
 
 float measeure_output_impedance()
@@ -190,7 +196,7 @@ float measeure_output_impedance()
 
     float z1 = SHUNT_R2 * (vpp1 - vpp2) / vpp2;
 
-    if (z1 < 700) {
+    if (z1 < IMP_ACCURACY_THRESHOLD) {
         // we may get better acurracy using lower shunt resistor
         select_shunt_low_res();
 
@@ -208,6 +214,11 @@ float measeure_output_impedance()
     redirest_shunt_to_output();
 
     return z1;
+infinity:
+    // go to default state
+    select_shunt_high_res();
+    redirest_shunt_to_output();
+    return INFINITY;
 }
 
 float measure_input_v()
