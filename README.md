@@ -1,7 +1,7 @@
 # Impedance Meter - a tool for measuring input and output impedance
 
 ## Details
-More details coming soon, some of them will be available on my [blog](rrowniak.com)
+More details coming soon, some of them will be available on my [blog](https://rrowniak.com)
 
 ## License
 
