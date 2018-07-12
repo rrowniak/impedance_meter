@@ -20,7 +20,9 @@ static enum State state = ST_IDLE;
 static bool measure_output = true;
 
 static float input_v = 0.0;
+static int input_v_state = STATE_OK;
 static float impedance_resutl = 0.0;
+static int impedance_result_state = STATE_OK;
 static enum State last_measurement = ST_IDLE;
 
 char omega = 0b11110100;
@@ -70,7 +72,11 @@ void refresh_display(uint32_t tick_ms, bool force)
     }
 
     lcd_set_cursor(0, 0);
-    lcd_printfln("Input: %.3f V", input_v);
+    if (input_v_state & STATE_OUT_OF_RANGE) {
+        lcd_printfln("Input: %.3f V OOR", input_v);
+    } else {
+        lcd_printfln("Input: %.3f V", input_v);
+    }
 
     char mode;
     if (measure_output) {
@@ -128,6 +134,7 @@ void logic_update(void)
     process_inputs(tick);
     if (tick - last_inp_v_ms > 300) {
         input_v = measure_input_v(tick);
+        input_v_state = get_last_meas_state();
         last_inp_v_ms = tick;
     }
 

@@ -58,6 +58,7 @@ Src/stm32f1xx_it.c \
 Src/stm32f1xx_hal_msp.c \
 Src/main.c \
 Src/adc.c \
+Src/error_correction.c \
 Src/gpio.c \
 Src/system_stm32f1xx.c \
 Src/hd44780.c \

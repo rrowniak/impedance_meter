@@ -3,6 +3,7 @@
 #include "adc.h"
 #include "gpio.h"
 #include "hd44780.h"
+#include "error_correction.h"
 #include "version.h"
 
 #define VOLT_EPSILON 0.0007
@@ -15,11 +16,11 @@
 
 #define CHECK_NON_ZERO(v) \
 if (v < VOLT_EPSILON) { \
-    state = STATE_INFINITY; \
+    state = state | STATE_INFINITY; \
     goto infinity; \
 } \
 
-static States state = STATE_OK;
+static int state = STATE_OK;
 
 static void error(char* msg)
 {
@@ -34,7 +35,7 @@ void init_measurement_unit()
     HAL_ADC_Start(&hadc2);
 }
 
-States get_last_meas_state() {
+int get_last_meas_state() {
     return state;
 }
 
@@ -99,7 +100,13 @@ static float measure_v(ADC_HandleTypeDef* hadc)
         sum = sum + ((float)rawValue) / 4095 * V_REF;
         HAL_Delay(MEASURE_SLEEP_MS);
     }
-    return sum / REPEAT_MEASURE;
+    float v = sum / REPEAT_MEASURE;
+
+    if (v >= V_REF - VOLT_EPSILON) {
+        state = state | STATE_OUT_OF_RANGE;
+    }
+
+    return v;
 }
 
 static float measure_v_auto(ADC_HandleTypeDef* hadc, float div1, float div2)
@@ -123,7 +130,7 @@ static float measure_v_auto(ADC_HandleTypeDef* hadc, float div1, float div2)
         enable_volt_divs();
     }
 
-    return v1;
+    return correct_voltage(v1);
 }
 
 float measure_input_impedance()

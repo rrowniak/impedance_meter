@@ -21,13 +21,14 @@ extern "C" {
 #define REPEAT_MEASURE 5
 
 typedef enum {
-    STATE_OK,
-    STATE_INFINITY,
-    STATE_LOW_PRECISION
+    STATE_OK = 0,
+    STATE_INFINITY = 0x1,
+    STATE_LOW_PRECISION = 0x2,
+    STATE_OUT_OF_RANGE = 0x4
 } States;
 
 void init_measurement_unit();
-States get_last_meas_state();
+int get_last_meas_state();
 float measure_input_v();
 float measure_input_impedance();
 float measeure_output_impedance();
