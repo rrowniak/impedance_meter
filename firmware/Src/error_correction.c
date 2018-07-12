@@ -9,7 +9,7 @@ float correct_voltage(float input_v) {
 #else
 
 // {observed (what device measures), expected (what multimeter shows)}
-// descending order, at least two rows
+// ascending order, at least two rows
 static const float observed[][2] = {
     {0.0, 0.0},
     {0.0035, 0.057},
