@@ -1,6 +1,6 @@
-#include "error_correction.h"
+#include "error_compensation.h"
 
-#if MEASURE_ERROR_CORRECTION < 1
+#if MEASURE_ERROR_COMPENSATION < 1
 
 float correct_voltage(float input_v) {
     return input_v;

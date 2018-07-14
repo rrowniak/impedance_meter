@@ -22,7 +22,7 @@ static bool measure_output = true;
 static float input_v = 0.0;
 static int input_v_state = STATE_OK;
 static float impedance_resutl = 0.0;
-static int impedance_result_state = STATE_OK;
+// static int impedance_result_state = STATE_OK;
 static enum State last_measurement = ST_IDLE;
 
 char omega = 0b11110100;

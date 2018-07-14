@@ -3,7 +3,7 @@
 #include "adc.h"
 #include "gpio.h"
 #include "hd44780.h"
-#include "error_correction.h"
+#include "error_compensation.h"
 #include "version.h"
 
 #define VOLT_EPSILON 0.0007

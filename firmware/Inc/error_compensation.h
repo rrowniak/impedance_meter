@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#define MEASURE_ERROR_CORRECTION 1
+#define MEASURE_ERROR_COMPENSATION 1
 
 float correct_voltage(float input_v);
 
